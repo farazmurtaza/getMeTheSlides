@@ -2,8 +2,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+import os
+import img2pdf
 import time
 import config
+from PIL import Image
 
 
 class GoogleSlidesBot():
@@ -52,10 +55,25 @@ class GoogleSlidesBot():
         # time.sleep(5)
         # rightArrowKey.click()
         actions.send_keys(Keys.ARROW_RIGHT)
-        for i in range(200):
+        for i in range(10):
             time.sleep(0.5)
+            self.browser.save_screenshot(str(i)+".png")
             actions.perform()
+
+        self.browser.close()
 
 
 bot = GoogleSlidesBot(config.username, config.password)
 bot.signIn()
+
+for j in range(10):
+    png = Image.open(str(j)+'.png')
+    png.load()  # required for png.split()
+
+    background = Image.new("RGB", png.size, (255, 255, 255))
+    background.paste(png, mask=png.split()[3])  # 3 is the alpha channel
+    background.save(str(j)+'.jpg', 'JPEG', quality=80)
+
+with open("output.pdf", "wb") as f:
+    f.write(img2pdf.convert(
+        [i for i in os.listdir('.') if i.endswith(".jpg")]))
