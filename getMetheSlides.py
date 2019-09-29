@@ -57,7 +57,7 @@ class GoogleSlidesBot():
         actions.send_keys(Keys.ARROW_RIGHT)
         for i in range(10):
             time.sleep(0.5)
-            self.browser.save_screenshot(str(i)+".png")
+            self.browser.save_screenshot(str(i+1)+".png")
             actions.perform()
 
         self.browser.close()
@@ -67,12 +67,12 @@ bot = GoogleSlidesBot(config.username, config.password)
 bot.signIn()
 
 for j in range(10):
-    png = Image.open(str(j)+'.png')
+    png = Image.open(str(j+1)+'.png')
     png.load()  # required for png.split()
 
     background = Image.new("RGB", png.size, (255, 255, 255))
     background.paste(png, mask=png.split()[3])  # 3 is the alpha channel
-    background.save(str(j)+'.jpg', 'JPEG', quality=80)
+    background.save(str(j+1)+'.jpg', 'JPEG', quality=80)
 
 with open("output.pdf", "wb") as f:
     f.write(img2pdf.convert(
